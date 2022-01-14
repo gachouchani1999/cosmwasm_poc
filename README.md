@@ -30,12 +30,26 @@ export TXFLAG=($NODE --chain-id $CHAIN_ID --gas-prices 0.025ubay --gas auto --ga
 ### Instantiation
 We need an Initialization message so we can store it in terminal: 
 ```
-INIT='{}'
+INIT='{"count": 11}'
 ```
 Then we can instantiate the contract using: 
 ```
 wasmd tx wasm instantiate $CODE_ID "$INIT" \
     --from wallet --label "awesome name service" $TXFLAG -y
 ```
+After Instantiation we can find the smart contract address from the result: `wasm1lsmfpf5vfax77udfqwfj2fwkn28myzrqy4d34s`
+We can then query the state count from: `wasmd query wasm contract-state smart $CONTRACT '{"get_count": {}}' $NODE`
 
+### Execution
+We can create a JSON of the execution message: `INCREMENT='{"increment": {}}'`
 
+We can find from the source code the TX ID: `647183D075250EB26B670BD82EDD0B3C1A4447493436826FFE8B13D80E5EEE1C`
+
+### Query
+We can know query the count from the state of the transaction
+```
+COUNT_QUERY='{"get_count": {}}'
+```
+```wasmd query wasm contract-state smart $CONTRACT "$COUNT_QUERY" $NODE --output json```
+
+We get a response of `{"data":{"count":12}}` showing that the count was indeed incremented by 1.
